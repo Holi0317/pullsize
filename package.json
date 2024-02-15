@@ -10,8 +10,8 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "fmt": "prettier --ignore-unknown --write .",
-    "lint": "eslint .",
+    "fmt": "prettier --cache --ignore-unknown --write .",
+    "lint": "eslint --cache --cache-location node_modules/.cache/eslint/.eslintcache .",
     "prepare": "husky"
   },
   "lint-staged": {
