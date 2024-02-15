@@ -5,11 +5,13 @@
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
-    "start": "wrangler dev"
+    "start": "wrangler dev",
+    "fmt": "prettier --ignore-unknown --write ."
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
     "itty-router": "^3.0.12",
+    "prettier": "^3.2.5",
     "typescript": "^5.0.4",
     "wrangler": "^3.0.0"
   }
