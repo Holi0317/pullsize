@@ -1,0 +1,7 @@
+# By default eslint ignores .*.js except `.eslintrc.js`. We want to lint other configs too
+!/.*.js
+!/.*.cjs
+
+.esbuild
+node_modules
+pnpm-lock.yaml

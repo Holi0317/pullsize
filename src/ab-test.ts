@@ -8,8 +8,8 @@ const EXPERIMENTS = [
 export default {
   async fetch(
     request: Request,
-    env: Env,
-    ctx: ExecutionContext,
+    _env: Env,
+    _ctx: ExecutionContext,
   ): Promise<Response> {
     const fingerprint = [
       request.headers.get("cf-connecting-ip"),
