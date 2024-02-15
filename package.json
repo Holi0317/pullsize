@@ -13,6 +13,7 @@
     "start": "wrangler dev",
     "fmt": "prettier --cache --ignore-unknown --write .",
     "lint": "eslint --cache --cache-location node_modules/.cache/eslint/.eslintcache .",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
   "lint-staged": {

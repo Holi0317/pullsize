@@ -32,3 +32,6 @@ jobs:
 
       - name: "Run prettier"
         run: "pnpm run fmt"
+
+      - name: "Run typecheck"
+        run: "pnpm run typecheck"
