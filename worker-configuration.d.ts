@@ -1,4 +1,19 @@
 interface Env {
+  /**
+   * Github app ID
+   */
+  GH_APP_ID: string;
+  /**
+   * Github webhook shared secret for verification.
+   *
+   * See https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries
+   */
+  GH_WEBHOOK_SECRET: string;
+  /**
+   * Github app private key for api request.
+   */
+  GH_PRIVATE_KEY: string;
+
   // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
   // MY_KV_NAMESPACE: KVNamespace;
   //

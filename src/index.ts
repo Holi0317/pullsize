@@ -1,16 +1,30 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { type IRequestStrict, Router, error, text } from "itty-router";
+import { useOctoApp } from "./octo";
+import { unwrap } from "./utils";
 
-import handleProxy from "./proxy";
-import handleRedirect from "./redirect";
-import apiRouter from "./router";
+interface AppRequest extends IRequestStrict {}
+
+export const router = Router<
+  AppRequest,
+  [env: Env, context: ExecutionContext]
+>();
+
+router.post("/github/webhook", async (req, env) => {
+  const octoApp = useOctoApp(env);
+
+  await octoApp.webhooks.verifyAndReceive({
+    id: unwrap(req.headers.get("x-request-id")),
+    name: unwrap(req.headers.get("x-github-event")) as any,
+    signature: unwrap(req.headers.get("x-hub-signature")),
+    payload: await req.text(),
+  });
+
+  return text("ok", {
+    status: 202,
+  });
+});
+
+router.all("*", () => error(404));
 
 // Export a default object containing event handlers
 export default {
@@ -21,30 +35,11 @@ export default {
     env: Env,
     ctx: ExecutionContext,
   ): Promise<Response> {
-    // You'll find it helpful to parse the request.url string into a URL object. Learn more at https://developer.mozilla.org/en-US/docs/Web/API/URL
-    const url = new URL(request.url);
-
-    // You can get pretty far with simple logic like if/switch-statements
-    switch (url.pathname) {
-      case "/redirect":
-        return handleRedirect.fetch(request, env, ctx);
-
-      case "/proxy":
-        return handleProxy.fetch(request, env, ctx);
+    try {
+      return await router.handle(request, env, ctx);
+    } catch (error) {
+      console.error("Router raised exception", error);
+      return text("Internal server error", { status: 500 });
     }
-
-    if (url.pathname.startsWith("/api/")) {
-      // You can also use more robust routing
-      return apiRouter.handle(request);
-    }
-
-    return new Response(
-      `Try making requests to:
-      <ul>
-      <li><code><a href="/redirect?redirectUrl=https://example.com/">/redirect?redirectUrl=https://example.com/</a></code>,</li>
-      <li><code><a href="/proxy?modify&proxyUrl=https://example.com/">/proxy?modify&proxyUrl=https://example.com/</a></code>, or</li>
-      <li><code><a href="/api/todos">/api/todos</a></code></li>`,
-      { headers: { "Content-Type": "text/html" } },
-    );
   },
 };
