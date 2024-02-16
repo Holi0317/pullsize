@@ -35,3 +35,6 @@ jobs:
 
       - name: "Run typecheck"
         run: "pnpm run typecheck"
+
+      - name: "Run unit test"
+        run: "pnpm test"
