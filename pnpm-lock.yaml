@@ -11,11 +11,17 @@ dependencies:
   octokit:
     specifier: ^3.1.2
     version: 3.1.2
+  parse-git-diff:
+    specifier: ^0.0.15
+    version: 0.0.15
 
 devDependencies:
   "@cloudflare/workers-types":
     specifier: ^4.20240208.0
     version: 4.20240208.0
+  "@octokit/webhooks-types":
+    specifier: ^7.3.2
+    version: 7.3.2
   eslint:
     specifier: ^8.56.0
     version: 8.56.0
@@ -898,7 +904,6 @@ packages:
       {
         integrity: sha512-JWOoOgtWTFnTSAamPXXyjTY5/apttvNxF+vPBnwdSu5cj5snrd7FO0fyw4+wTXy8fHduq626JjhO+TwCyyA6vA==,
       }
-    dev: false
 
   /@octokit/webhooks@12.1.1:
     resolution:
@@ -2957,6 +2962,13 @@ packages:
     dependencies:
       callsites: 3.1.0
     dev: true
+
+  /parse-git-diff@0.0.15:
+    resolution:
+      {
+        integrity: sha512-KU7FMvw7ybx2BqkSJthyLl6G4LmKzWwOyalNLdJtzkV7xIFU5oCIVDP9OQl+0vkVv7EKiKDnJlkdzPQ6ueFsgw==,
+      }
+    dev: false
 
   /parse-json@5.2.0:
     resolution:
