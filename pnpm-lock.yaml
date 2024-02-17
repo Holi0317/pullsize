@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  "@cfworker/sentry":
+    specifier: ^2.0.0
+    version: 2.0.0
   "@octokit/auth-app":
     specifier: ^6.0.3
     version: 6.0.3
@@ -87,6 +90,23 @@ packages:
       js-tokens: 4.0.0
     dev: true
 
+  /@cfworker/sentry@2.0.0:
+    resolution:
+      {
+        integrity: sha512-P8WbEkT9QvHS/3taqP0eEi8J+akAAOgyK/kWSxu1BE6+/2lwDgT94abB+vkd7uIpivJIfuBemw7S0OQsKHqcbA==,
+      }
+    dependencies:
+      "@cfworker/worker-types": 1.12.3
+      "@cloudflare/workers-types": 2.2.2
+    dev: false
+
+  /@cfworker/worker-types@1.12.3:
+    resolution:
+      {
+        integrity: sha512-p9wWxB1n+D0Mm9YFYcU80Ea9rUqYDAkuYvSPjKezCSjFKGDm12x9S/8md33h7a4IAzxtO9pfOVoVLvVI2hpR9g==,
+      }
+    dev: false
+
   /@cloudflare/kv-asset-handler@0.3.1:
     resolution:
       {
@@ -155,6 +175,13 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@cloudflare/workers-types@2.2.2:
+    resolution:
+      {
+        integrity: sha512-kaMn2rueJ0PL1TYVGknTCh0X0x0d9G+FNXAFep7/4uqecEZoQb/63o6rOmMuiqI09zLuHV6xhKRXinokV/MY9A==,
+      }
+    dev: false
 
   /@cloudflare/workers-types@4.20240208.0:
     resolution:

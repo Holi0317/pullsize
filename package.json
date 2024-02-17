@@ -34,6 +34,7 @@
     "wrangler": "^3.0.0"
   },
   "dependencies": {
+    "@cfworker/sentry": "^2.0.0",
     "@octokit/auth-app": "^6.0.3",
     "octokit": "^3.1.2"
   }

@@ -14,6 +14,11 @@ interface Env {
    */
   GH_PRIVATE_KEY: string;
 
+  /**
+   * Sentry DSN. Optional and might not be configured
+   */
+  SENTRY_DSN?: string;
+
   // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
   // MY_KV_NAMESPACE: KVNamespace;
   //
