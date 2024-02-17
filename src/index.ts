@@ -1,4 +1,5 @@
 import { type IRequestStrict, Router, error, text } from "itty-router";
+import { captureError } from "@cfworker/sentry";
 import { useOctoApp } from "./octo";
 import { unwrap } from "./utils";
 
@@ -39,6 +40,20 @@ export default {
       return await router.handle(request, env, ctx);
     } catch (error) {
       console.error("Router raised exception", error);
+
+      if (env.SENTRY_DSN) {
+        const { posted } = captureError({
+          sentryDsn: env.SENTRY_DSN,
+          environment: "prod",
+          release: "release",
+          err: error,
+          request,
+          user: "",
+        });
+
+        ctx.waitUntil(posted);
+      }
+
       return text("Internal server error", { status: 500 });
     }
   },
