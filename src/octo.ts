@@ -2,6 +2,13 @@ import { App, type Octokit } from "octokit";
 import type { PullRequest } from "@octokit/webhooks-types";
 import { genDiffSummary } from "./diff";
 import { unwrap } from "./utils";
+import { z } from "zod";
+
+const ViewerSchema = z.object({
+  viewer: z.object({
+    databaseId: z.number(),
+  }),
+});
 
 /**
  * Find PR comment number to edit, if we have already left a comment there.
@@ -10,7 +17,10 @@ import { unwrap } from "./utils";
  * suggesting we should create a new comment.
  */
 async function findPRComment(octo: Octokit, pr: PullRequest) {
-  const me = await octo.request("GET /user");
+  // IDK how to get the app's user ID with rest API. But this is trivial with
+  // graphQL
+  const viewerQuery = await octo.graphql(`query { viewer { databaseId } }`);
+  const viewer = ViewerSchema.parse(viewerQuery);
 
   // Only listing the first page for pr comments. This endpoint sorts comments
   // in ascending order of comment number (which means commenting order/creation
@@ -26,7 +36,7 @@ async function findPRComment(octo: Octokit, pr: PullRequest) {
   );
 
   for (const comment of comments.data) {
-    if (comment.user?.id === me.data.id) {
+    if (comment.user?.id === viewer.viewer.databaseId) {
       return comment.id;
     }
   }
