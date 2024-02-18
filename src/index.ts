@@ -14,7 +14,7 @@ router.post("/github/webhook", async (req, env) => {
   const octoApp = useOctoApp(env);
 
   await octoApp.webhooks.verifyAndReceive({
-    id: unwrap(req.headers.get("x-request-id")),
+    id: unwrap(req.headers.get("x-github-hook-id")),
     name: unwrap(req.headers.get("x-github-event")) as any,
     signature: unwrap(req.headers.get("x-hub-signature")),
     payload: await req.text(),
