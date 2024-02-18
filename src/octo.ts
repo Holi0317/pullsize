@@ -1,6 +1,7 @@
-import { App } from "octokit";
+import { App, type Octokit } from "octokit";
 import type { PullRequest } from "@octokit/webhooks-types";
 import { genDiffSummary } from "./diff";
+import { unwrap } from "./utils";
 
 /**
  * Find PR comment number to edit, if we have already left a comment there.
@@ -8,14 +9,14 @@ import { genDiffSummary } from "./diff";
  * If this is a new PR we haven't touched before, this will return `null`,
  * suggesting we should create a new comment.
  */
-async function findPRComment(app: App, pr: PullRequest) {
-  const appInfo = await app.octokit.request("GET /app");
+async function findPRComment(octo: Octokit, pr: PullRequest) {
+  const appInfo = await octo.request("GET /app");
 
   // Only listing the first page for pr comments. This endpoint sorts comments
   // in ascending order of comment number (which means commenting order/creation
   // time). Assuming we are fast and be the first few bots leaving comments in
   // the PR.
-  const comments = await app.octokit.request(
+  const comments = await octo.request(
     "GET /repos/{owner}/{repo}/issues/{issue_number}/comments",
     {
       owner: pr.base.repo.owner.login,
@@ -33,8 +34,12 @@ async function findPRComment(app: App, pr: PullRequest) {
   return null;
 }
 
-async function handle(pr: PullRequest, app: App) {
-  console.log(`Handling PR ${pr.base.repo.full_name}#${pr.number}`);
+async function handle(app: App, installation_id: number, pr: PullRequest) {
+  console.log(
+    `Handling PR ${pr.base.repo.full_name}#${pr.number}. Installation ID = ${installation_id}`,
+  );
+
+  const octo = await app.getInstallationOctokit(installation_id);
 
   if (pr.state === "closed") {
     console.info("PR is closed. Ignoring the webhook");
@@ -42,7 +47,7 @@ async function handle(pr: PullRequest, app: App) {
   }
 
   console.log("Fetching diff for the PR");
-  const response = await app.octokit.request(
+  const response = await octo.request(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}",
     {
       owner: pr.base.repo.owner.login,
@@ -61,11 +66,11 @@ async function handle(pr: PullRequest, app: App) {
   const summary = genDiffSummary(diffFile);
 
   console.log("Finding existing PR comment");
-  const commentID = await findPRComment(app, pr);
+  const commentID = await findPRComment(octo, pr);
 
   if (commentID == null) {
     console.info("Cannot find existing PR. Leaving new comment");
-    await app.octokit.request(
+    await octo.request(
       "POST /repos/{owner}/{repo}/issues/{issue_number}/comments",
       {
         owner: pr.base.repo.owner.login,
@@ -76,7 +81,7 @@ async function handle(pr: PullRequest, app: App) {
     );
   } else {
     console.info(`Updating PR comment ${commentID}`);
-    await app.octokit.request(
+    await octo.request(
       "PATCH /repos/{owner}/{repo}/issues/comments/{comment_id}",
       {
         owner: pr.base.repo.owner.login,
@@ -96,16 +101,44 @@ export function useOctoApp(env: Env) {
   });
 
   app.webhooks.on("pull_request.edited", (event) =>
-    handle(event.payload.pull_request, app),
+    handle(
+      app,
+      unwrap(
+        event.payload.installation?.id,
+        "Missing installation.id in webhook payload",
+      ),
+      event.payload.pull_request,
+    ),
   );
   app.webhooks.on("pull_request.synchronize", (event) =>
-    handle(event.payload.pull_request, app),
+    handle(
+      app,
+      unwrap(
+        event.payload.installation?.id,
+        "Missing installation.id in webhook payload",
+      ),
+      event.payload.pull_request,
+    ),
   );
   app.webhooks.on("pull_request.opened", (event) =>
-    handle(event.payload.pull_request, app),
+    handle(
+      app,
+      unwrap(
+        event.payload.installation?.id,
+        "Missing installation.id in webhook payload",
+      ),
+      event.payload.pull_request,
+    ),
   );
   app.webhooks.on("pull_request.reopened", (event) =>
-    handle(event.payload.pull_request, app),
+    handle(
+      app,
+      unwrap(
+        event.payload.installation?.id,
+        "Missing installation.id in webhook payload",
+      ),
+      event.payload.pull_request,
+    ),
   );
 
   return app;
