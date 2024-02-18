@@ -10,7 +10,7 @@ import { unwrap } from "./utils";
  * suggesting we should create a new comment.
  */
 async function findPRComment(octo: Octokit, pr: PullRequest) {
-  const appInfo = await octo.request("GET /app");
+  const me = await octo.request("GET /user");
 
   // Only listing the first page for pr comments. This endpoint sorts comments
   // in ascending order of comment number (which means commenting order/creation
@@ -26,7 +26,7 @@ async function findPRComment(octo: Octokit, pr: PullRequest) {
   );
 
   for (const comment of comments.data) {
-    if (comment.user?.id === appInfo.data.id) {
+    if (comment.user?.id === me.data.id) {
       return comment.id;
     }
   }
