@@ -2,7 +2,9 @@ import { App } from "octokit";
 import type { PullRequest } from "@octokit/webhooks-types";
 import { Handler } from "./handler";
 import { unwrap } from "./utils";
-import { Updater } from "./updater";
+import { CommentUpdater, LabelUpdater } from "./updater";
+import { ConfigType, readConfig } from "./config";
+import { Context } from "./context";
 
 async function handle(app: App, installation_id: number, pr: PullRequest) {
   console.log(
@@ -10,14 +12,15 @@ async function handle(app: App, installation_id: number, pr: PullRequest) {
   );
 
   const octo = await app.getInstallationOctokit(installation_id);
+  const ctx = new Context(octo, pr);
 
-  if (pr.state === "closed") {
+  if (ctx.pr.state === "closed") {
     console.info("PR is closed. Ignoring the webhook");
     return;
   }
 
   console.log("Fetching diff for the PR");
-  const response = await octo.request(
+  const response = await ctx.octo.request(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}",
     {
       owner: pr.base.repo.owner.login,
@@ -33,15 +36,32 @@ async function handle(app: App, installation_id: number, pr: PullRequest) {
   // https://github.com/octokit/request.js/issues/463#issuecomment-1164800888
   const diffFile = response.data as unknown as string;
 
-  const handler = new Handler();
+  const commentUpdater = new CommentUpdater(ctx);
+
+  let config: ConfigType;
+  try {
+    config = await readConfig(ctx);
+  } catch (error) {
+    console.error("Failed to read config", error);
+    await commentUpdater.updateComment(`Failed to read config. Pullsize bot is not operating!
+
+Exception detail:
+\`\`\`
+${error}
+\`\`\`
+`);
+    return;
+  }
+
+  const handler = new Handler(config);
   const resp = await handler.run(diffFile);
 
   console.log("Ran handler. Updating PR comment and label", resp);
 
-  const updater = new Updater(octo, pr);
-  await updater.updateComment(resp.comment);
-  await updater.createLabels();
-  await updater.updateLabel(resp.label);
+  const labelUpdater = new LabelUpdater(ctx, config);
+  await commentUpdater.updateComment(resp.comment);
+  await labelUpdater.createLabels();
+  await labelUpdater.updateLabel(resp.label);
 }
 
 export function useOctoApp(env: Env) {
