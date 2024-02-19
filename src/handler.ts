@@ -1,4 +1,5 @@
 import parseGitDiff, { type AnyChunk } from "parse-git-diff";
+import { ConfigType } from "./config";
 
 export interface HandlerResponse {
   label: string | null;
@@ -33,6 +34,8 @@ function summarizeChunk(chunk: AnyChunk): Summary {
 }
 
 export class Handler {
+  public constructor(private readonly config: ConfigType) {}
+
   public async run(diffFile: string): Promise<HandlerResponse> {
     const summaryMap = this.genDiffSummary(diffFile);
     const summary: Summary = { add: 0, del: 0 };
@@ -74,26 +77,15 @@ export class Handler {
     return summary;
   }
 
-  private getSize(summary: Summary): string {
-    // TODO: Respect config settings
+  private getSize(summary: Summary): string | null {
     const size = summary.add + summary.del;
 
-    if (size >= 1000) {
-      return "size/x-large";
+    for (const preset of this.config.labels) {
+      if (size >= preset.threshold) {
+        return preset.name;
+      }
     }
 
-    if (size >= 500) {
-      return "size/large";
-    }
-
-    if (size >= 200) {
-      return "size/medium";
-    }
-
-    if (size >= 100) {
-      return "size/small";
-    }
-
-    return "size/x-small";
+    return null;
   }
 }
