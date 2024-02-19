@@ -52,6 +52,7 @@ export class Handler {
       summary.del += sum.del;
     }
 
+    console.log("Got summary of the PR", summary);
     const size = this.getSize(summary);
 
     return {
