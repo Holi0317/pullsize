@@ -1,5 +1,6 @@
 import parseGitDiff, { type AnyChunk } from "parse-git-diff";
 import { ConfigType } from "./config";
+import picomatch from "picomatch";
 
 export interface HandlerResponse {
   label: string | null;
@@ -40,10 +41,15 @@ export class Handler {
     const summaryMap = this.genDiffSummary(diffFile);
     const summary: Summary = { add: 0, del: 0 };
 
-    // TODO: Ignore files base on config
-    for (const s of summaryMap.values()) {
-      summary.add += s.add;
-      summary.del += s.del;
+    const matcher = picomatch(this.config.ignore);
+
+    for (const [filepath, sum] of summaryMap) {
+      if (matcher(filepath)) {
+        continue;
+      }
+
+      summary.add += sum.add;
+      summary.del += sum.del;
     }
 
     const size = this.getSize(summary);

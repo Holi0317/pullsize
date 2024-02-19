@@ -23,6 +23,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
     "@octokit/webhooks-types": "^7.3.2",
+    "@types/picomatch": "^2.3.3",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-unicorn": "^51.0.1",
@@ -40,6 +41,7 @@
     "js-toml": "^1.0.0",
     "octokit": "^3.1.2",
     "parse-git-diff": "^0.0.15",
+    "picomatch": "^4.0.1",
     "zod": "^3.22.4"
   }
 }

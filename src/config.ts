@@ -4,6 +4,9 @@ import { load } from "js-toml";
 import type { Context } from "./context";
 
 const ConfigSchema = z.object({
+  /**
+   * List of labels for pr size.
+   */
   labels: z
     .array(
       z.object({
@@ -26,6 +29,11 @@ const ConfigSchema = z.object({
       clone.sort((a, b) => b.threshold - a.threshold);
       return clone;
     }),
+  /**
+   * Array of glob pattern to match against the file. If match, the file will
+   * get ignored in pr size calculation
+   */
+  ignore: z.array(z.string()).default(() => []),
 });
 
 export type ConfigType = z.infer<typeof ConfigSchema>;
@@ -40,6 +48,7 @@ const DEFAULT_CONFIG: ConfigType = {
     { name: "size/small", color: "008000", threshold: 100 },
     { name: "size/x-small", color: "008000", threshold: 0 },
   ],
+  ignore: ["package-lock.json", ".yarn/*", "yarn.lock", "pnpm-lock.yaml"],
 };
 
 export async function readConfig(ctx: Context): Promise<ConfigType> {
