@@ -1,48 +1,8 @@
-import { App, type Octokit } from "octokit";
+import { App } from "octokit";
 import type { PullRequest } from "@octokit/webhooks-types";
-import { genDiffSummary } from "./diff";
+import { Handler } from "./handler";
 import { unwrap } from "./utils";
-import { z } from "zod";
-
-const ViewerSchema = z.object({
-  viewer: z.object({
-    databaseId: z.number(),
-  }),
-});
-
-/**
- * Find PR comment number to edit, if we have already left a comment there.
- *
- * If this is a new PR we haven't touched before, this will return `null`,
- * suggesting we should create a new comment.
- */
-async function findPRComment(octo: Octokit, pr: PullRequest) {
-  // IDK how to get the app's user ID with rest API. But this is trivial with
-  // graphQL
-  const viewerQuery = await octo.graphql(`query { viewer { databaseId } }`);
-  const viewer = ViewerSchema.parse(viewerQuery);
-
-  // Only listing the first page for pr comments. This endpoint sorts comments
-  // in ascending order of comment number (which means commenting order/creation
-  // time). Assuming we are fast and be the first few bots leaving comments in
-  // the PR.
-  const comments = await octo.request(
-    "GET /repos/{owner}/{repo}/issues/{issue_number}/comments",
-    {
-      owner: pr.base.repo.owner.login,
-      repo: pr.base.repo.name,
-      issue_number: pr.number,
-    },
-  );
-
-  for (const comment of comments.data) {
-    if (comment.user?.id === viewer.viewer.databaseId) {
-      return comment.id;
-    }
-  }
-
-  return null;
-}
+import { Updater } from "./updater";
 
 async function handle(app: App, installation_id: number, pr: PullRequest) {
   console.log(
@@ -73,34 +33,15 @@ async function handle(app: App, installation_id: number, pr: PullRequest) {
   // https://github.com/octokit/request.js/issues/463#issuecomment-1164800888
   const diffFile = response.data as unknown as string;
 
-  const summary = genDiffSummary(diffFile);
+  const handler = new Handler();
+  const resp = await handler.run(diffFile);
 
-  console.log("Finding existing PR comment");
-  const commentID = await findPRComment(octo, pr);
+  console.log("Ran handler. Updating PR comment and label", resp);
 
-  if (commentID == null) {
-    console.info("Cannot find existing PR. Leaving new comment");
-    await octo.request(
-      "POST /repos/{owner}/{repo}/issues/{issue_number}/comments",
-      {
-        owner: pr.base.repo.owner.login,
-        repo: pr.base.repo.name,
-        issue_number: pr.number,
-        body: summary,
-      },
-    );
-  } else {
-    console.info(`Updating PR comment ${commentID}`);
-    await octo.request(
-      "PATCH /repos/{owner}/{repo}/issues/comments/{comment_id}",
-      {
-        owner: pr.base.repo.owner.login,
-        repo: pr.base.repo.name,
-        comment_id: commentID,
-        body: summary,
-      },
-    );
-  }
+  const updater = new Updater(octo, pr);
+  await updater.updateComment(resp.comment);
+  await updater.createLabels();
+  await updater.updateLabel(resp.label);
 }
 
 export function useOctoApp(env: Env) {
