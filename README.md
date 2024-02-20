@@ -15,6 +15,8 @@ Mark pull request size as label, hosted on Cloudflare worker.
 - Runs on CloudFlare worker, within free plan usage limit
 - Easy to host yourself
 
+Example PR: https://github.com/Holi0317/pullsize/pull/10
+
 Here are non-goals for this project:
 
 - Semantic diff (Like [difftastic]). That is too expensive to run and does not
