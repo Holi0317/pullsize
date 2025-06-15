@@ -3,6 +3,7 @@ import { captureError } from "@cfworker/sentry";
 import { useOctoApp } from "./octo";
 import { unwrap } from "./utils";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface AppRequest extends IRequestStrict {}
 
 export const router = Router<
