@@ -5,7 +5,13 @@ import unicorn from "eslint-plugin-unicorn";
 
 export default tseslint.config(
   {
-    ignores: [".esbuild", "node_modules", "pnpm-lock.yaml", ".wrangler"],
+    ignores: [
+      ".esbuild",
+      "node_modules",
+      "pnpm-lock.yaml",
+      ".wrangler",
+      "worker-configuration.d.ts",
+    ],
   },
 
   eslint.configs.recommended,
