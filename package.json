@@ -13,6 +13,7 @@
     "start": "wrangler dev",
     "fmt": "prettier --cache --ignore-unknown --write .",
     "lint": "eslint --cache --cache-location node_modules/.cache/eslint/.eslintcache .",
+    "cf-typegen": "wrangler types",
     "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
@@ -21,7 +22,6 @@
     "*.{js,cjs,mjs,ts}": "eslint"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240208.0",
     "@octokit/webhooks-types": "^7.3.2",
     "@types/picomatch": "^2.3.3",
     "eslint": "^9.29.0",
