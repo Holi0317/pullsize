@@ -1,61 +1,58 @@
-import { type IRequestStrict, Router, error, text } from "itty-router";
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
 import { captureError } from "@cfworker/sentry";
 import { useOctoApp } from "./octo";
-import { unwrap } from "./utils";
+import z from "zod";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface AppRequest extends IRequestStrict {}
+const app = new Hono<{ Bindings: Env }>();
 
-export const router = Router<
-  AppRequest,
-  [env: Env, context: ExecutionContext]
->();
+app.post(
+  "/github/webhook",
+  zValidator(
+    "header",
+    z.object({
+      "x-github-hook-id": z.string(),
+      "x-github-event": z.string(),
+      "x-hub-signature": z.string(),
+    }),
+  ),
+  async (c) => {
+    const octoApp = useOctoApp(c.env);
 
-router.post("/github/webhook", async (req, env) => {
-  const octoApp = useOctoApp(env);
+    const headers = c.req.valid("header");
 
-  await octoApp.webhooks.verifyAndReceive({
-    id: unwrap(req.headers.get("x-github-hook-id")),
-    name: unwrap(req.headers.get("x-github-event")) as any,
-    signature: unwrap(req.headers.get("x-hub-signature")),
-    payload: await req.text(),
-  });
+    await octoApp.webhooks.verifyAndReceive({
+      id: headers["x-github-hook-id"],
+      name: headers["x-github-event"] as any, // FIXME: Verify enum on zod
+      signature: headers["x-hub-signature"],
+      payload: await c.req.text(),
+    });
 
-  return text("ok", {
-    status: 202,
-  });
+    return c.text("ok", 202);
+  },
+);
+
+app.notFound((c) => {
+  return c.text("Not found", 404);
 });
 
-router.all("*", () => error(404));
+app.onError((err, c) => {
+  console.error("Router raised exception", err);
 
-// Export a default object containing event handlers
-export default {
-  // The fetch handler is invoked when this worker receives a HTTP(S) request
-  // and should return a Response (optionally wrapped in a Promise)
-  async fetch(
-    request: Request,
-    env: Env,
-    ctx: ExecutionContext,
-  ): Promise<Response> {
-    try {
-      return await router.handle(request, env, ctx);
-    } catch (error) {
-      console.error("Router raised exception", error);
+  if (c.env.SENTRY_DSN) {
+    const { posted } = captureError({
+      sentryDsn: c.env.SENTRY_DSN,
+      environment: "prod",
+      release: "release",
+      err,
+      request: c.req.raw,
+      user: "",
+    });
 
-      if (env.SENTRY_DSN) {
-        const { posted } = captureError({
-          sentryDsn: env.SENTRY_DSN,
-          environment: "prod",
-          release: "release",
-          err: error,
-          request,
-          user: "",
-        });
+    c.executionCtx.waitUntil(posted);
+  }
 
-        ctx.waitUntil(posted);
-      }
+  return c.text("Internal server error", { status: 500 });
+});
 
-      return text("Internal server error", { status: 500 });
-    }
-  },
-};
+export default app;
