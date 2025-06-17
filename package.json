@@ -4,15 +4,16 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "^20.10.0"
+    "node": "^22.0.0"
   },
-  "packageManager": "pnpm@8.15.3",
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac",
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "fmt": "prettier --cache --ignore-unknown --write .",
     "lint": "eslint --cache --cache-location node_modules/.cache/eslint/.eslintcache .",
+    "cf-typegen": "wrangler types",
     "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
@@ -21,19 +22,19 @@
     "*.{js,cjs,mjs,ts}": "eslint"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240208.0",
+    "@eslint/js": "^9.29.0",
     "@octokit/webhooks-types": "^7.3.2",
     "@types/picomatch": "^2.3.3",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-unicorn": "^51.0.1",
+    "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-unicorn": "^59.0.1",
     "husky": "^9.0.11",
     "itty-router": "^4.0.27",
-    "lint-staged": "^15.2.2",
+    "lint-staged": "^16.1.2",
     "prettier": "^3.2.5",
     "typescript": "^5.0.4",
-    "typescript-eslint": "^7.0.1",
-    "wrangler": "^3.0.0"
+    "typescript-eslint": "^8.34.0",
+    "wrangler": "^4.20.0"
   },
   "dependencies": {
     "@cfworker/sentry": "^2.0.0",

@@ -4,6 +4,16 @@ import prettier from "eslint-config-prettier";
 import unicorn from "eslint-plugin-unicorn";
 
 export default tseslint.config(
+  {
+    ignores: [
+      ".esbuild",
+      "node_modules",
+      "pnpm-lock.yaml",
+      ".wrangler",
+      "worker-configuration.d.ts",
+    ],
+  },
+
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {

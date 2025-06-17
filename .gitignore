@@ -168,5 +168,5 @@ dist
 
 # wrangler project
 
-.dev.vars
+#.dev.vars
 .wrangler/
