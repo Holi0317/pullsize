@@ -22,6 +22,7 @@
     "*.{js,cjs,mjs,ts}": "eslint"
   },
   "devDependencies": {
+    "@eslint/js": "^9.29.0",
     "@octokit/webhooks-types": "^7.3.2",
     "@types/picomatch": "^2.3.3",
     "eslint": "^9.29.0",
