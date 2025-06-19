@@ -1,6 +1,6 @@
 import { RequestError } from "octokit";
 import { z } from "zod";
-import { load } from "js-toml";
+import { parse } from "@std/toml";
 import type { Context } from "./context";
 
 const ConfigSchema = z.object({
@@ -84,6 +84,6 @@ export async function readConfig(ctx: Context): Promise<ConfigType> {
     );
   }
 
-  const tom = load(content);
+  const tom = parse(content);
   return ConfigSchema.parse(tom);
 }
