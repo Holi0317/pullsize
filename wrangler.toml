@@ -5,7 +5,10 @@
 
 name = "pullsize"
 main = "src/index.ts"
-compatibility_date = "2024-02-08"
+compatibility_date = "2025-06-26"
 
 [observability.logs]
 enabled = true
+
+[env]
+"beta" = {}
