@@ -13,7 +13,7 @@ app.post(
     z.object({
       "x-github-hook-id": z.string(),
       "x-github-event": z.string(),
-      "x-hub-signature": z.string(),
+      "x-hub-signature-256": z.string(),
     }),
   ),
   async (c) => {
@@ -24,7 +24,7 @@ app.post(
     await octoApp.webhooks.verifyAndReceive({
       id: headers["x-github-hook-id"],
       name: headers["x-github-event"] as any, // FIXME: Verify enum on zod
-      signature: headers["x-hub-signature"],
+      signature: headers["x-hub-signature-256"],
       payload: await c.req.text(),
     });
 
