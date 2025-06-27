@@ -13,14 +13,14 @@ Mark pull request size as label, hosted on Cloudflare worker.
 - Mark PR size base on the diff size (lines added + lines deleted) as label
 - Configurable per repo: See [configuration](#configuration-file) for details
 - Runs on CloudFlare worker, within free plan usage limit
-- Easy to host yourself
+- Easy to host yourself (on cloudflare worker)
 
 Example PR: https://github.com/Holi0317/pullsize/pull/10
 
 Here are non-goals for this project:
 
 - Semantic diff (Like [difftastic]). That is too expensive to run and does not
-  compile to wasm for using in CloudFlare worker
+  compile to wasm (yet) for use in CloudFlare worker
 
 [microsoft/PullRequestQuantifier]:
   https://github.com/microsoft/PullRequestQuantifier
@@ -28,10 +28,10 @@ Here are non-goals for this project:
 
 ## Installation (Hosted)
 
-Install via here: https://github.com/apps/pullsize
+Install via Github Marketplace: <https://github.com/apps/pullsize>
 
 > [!NOTE]  
-> GitHub Enterprise Server is not supported yet
+> GitHub Enterprise Server is not yet supported. Open an issue if you need it.
 
 Note that this hosted version is provided in best effort bases. It might break
 or goes away without prior notice.
@@ -40,10 +40,11 @@ This is hosted on CloudFlare worker free plan. If this got too much traffic or
 the PR is too large, the bot will stop working. I don't plan to pay for hosting
 this bot. If you have a large amount of request, host it yourself.
 
-Also this bot will access PR diff and repository content for the config file, it
-is pretty powerful and might be uncomfortable for organizations. It is
-recommended to host this bot yourself: It just needs a CloudFlare account on
-worker free plan and a few setup steps.
+Also this bot will have permission to access PR diff and repository content for
+the config file. If the permission is a bit too wide and uncomfortable for your
+organizations, host this bot yourself: It just needs a CloudFlare account on
+worker free plan and a few setup steps. You don't even need to own a domain on
+Cloudflare.
 
 ## Configuration file
 
@@ -51,13 +52,13 @@ Configuration file is stored in the repository's `.github/prsize.toml` in toml
 format. If this file does not exist, we will use the default configuration
 specified in
 [config.ts](https://github.com/Holi0317/pullsize/blob/main/src/config.ts),
-`DEFAULT_CONFIG` variable.
+`ConfigSchema` variable.
 
-Pullsize will be reading the config from the base branch of the PR. So if your
-PR is updating the config, the new config will get applied on that PR.
+Pullsize will read the config from the base branch of the PR. So if your PR is
+updating the config, the new config will get applied on that PR.
 
 This is an annotated toml configuration. Note that the content is for example
-only and not the default content.
+only and _not_ the default content.
 
 ```toml
 # List of glob for ignoring files
@@ -80,15 +81,22 @@ color = "ff0000"
 threshold = 0 # Add a threshold=0 for smallest label
 ```
 
+## Branching model and worker environment
+
+- PR should target `main` branch, where it will deploy to `beta` environment and
+  test on this repository
+- If it's stable enough, I'll tag the main branch with a date to release to the
+  hosted bot
+
 ## Deployment (self hosting)
 
 This means forking this repository and host the bot within your CloudFlare
-account. Most likely, restricting the github app to only be available in the
+account. Most likely, restricting the GitHub app to only be available in the
 organization.
 
 ### Step 1: Initial deploy
 
-We will use github action to deploy this app into CloudFlare.
+We will use GitHub action to deploy this app into CloudFlare.
 
 1. Fork this repository
 2. Create a CloudFlare account if you don't have one yet
@@ -115,7 +123,7 @@ https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/re
 - Set up URL: Leave it empty
 - Webhook: Active
 - Webhook URL: `https://<worker_domain>/github/webhook`, where `<worker_domain>`
-  is get from the cloudflare dashboard.
+  is the `.workers.dev` domain provided by CloudFlare
 - Webhook secret: Generate a random string and save it up
 - Repository permissions:
   - Contents: Read-only
