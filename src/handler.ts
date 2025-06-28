@@ -1,6 +1,6 @@
 import parseGitDiff, { type AnyChunk } from "parse-git-diff";
-import { ConfigType } from "./config";
 import picomatch from "picomatch";
+import type { ConfigType } from "./config";
 
 export interface HandlerResponse {
   label: string | null;

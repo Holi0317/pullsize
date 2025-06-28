@@ -3,7 +3,7 @@ import type { PullRequest } from "@octokit/webhooks-types";
 import { Handler } from "./handler";
 import { unwrap } from "./utils";
 import { CommentUpdater, LabelUpdater } from "./updater";
-import { ConfigType, readConfig } from "./config";
+import { readConfig, type ConfigType } from "./config";
 import { Context } from "./context";
 
 async function handle(app: App, installation_id: number, pr: PullRequest) {

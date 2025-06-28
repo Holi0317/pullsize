@@ -2,6 +2,7 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import prettier from "eslint-config-prettier";
 import unicorn from "eslint-plugin-unicorn";
+import importPlugin from "eslint-plugin-import-x";
 
 export default tseslint.config(
   {
@@ -19,6 +20,7 @@ export default tseslint.config(
   {
     plugins: {
       unicorn,
+      import: importPlugin,
     },
   },
   {
@@ -29,6 +31,7 @@ export default tseslint.config(
       "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
       "@typescript-eslint/consistent-type-definitions": "error",
       "unicorn/catch-error-name": "error",
+      "import/order": ["error"],
     },
   },
   {
@@ -50,6 +53,8 @@ export default tseslint.config(
       ],
       "@typescript-eslint/explicit-member-accessibility": "error",
       "@typescript-eslint/prefer-ts-expect-error": "error",
+      "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/no-import-type-side-effects": "error",
       "unicorn/no-useless-spread": "error",
       "unicorn/no-array-reduce": "error",
       "unicorn/no-array-for-each": "error",

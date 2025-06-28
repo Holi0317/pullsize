@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { captureError } from "@cfworker/sentry";
-import { useOctoApp } from "./octo";
 import z from "zod";
+import { useOctoApp } from "./octo";
 
 const app = new Hono<{ Bindings: Env }>();
 
