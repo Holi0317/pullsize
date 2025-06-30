@@ -1,7 +1,8 @@
-import { RequestError } from "octokit";
+import { type Octokit, RequestError } from "octokit";
 import { z } from "zod";
 import { parse } from "@std/toml";
-import type { Context } from "./context";
+import type { PullRequest } from "@octokit/webhooks-types";
+import { getPRInfo } from "./prinfo";
 
 const ConfigSchema = z.object({
   /**
@@ -51,17 +52,22 @@ const DEFAULT_CONFIG: ConfigType = {
   ignore: ["package-lock.json", ".yarn/*", "yarn.lock", "pnpm-lock.yaml"],
 };
 
-export async function readConfig(ctx: Context): Promise<ConfigType> {
+export async function readConfig(
+  octo: Octokit,
+  pr: PullRequest,
+): Promise<ConfigType> {
   let content: unknown;
 
+  const { owner, repo } = getPRInfo(pr);
+
   try {
-    const resp = await ctx.octo.request(
+    const resp = await octo.request(
       "GET /repos/{owner}/{repo}/contents/{path}",
       {
-        owner: ctx.owner,
-        repo: ctx.repo,
+        owner,
+        repo,
         path: CONFIG_PATH,
-        ref: ctx.pr.base.ref,
+        ref: pr.base.ref,
         mediaType: {
           format: "raw",
         },

@@ -51,7 +51,7 @@ Cloudflare.
 Configuration file is stored in the repository's `.github/prsize.toml` in toml
 format. If this file does not exist, we will use the default configuration
 specified in
-[config.ts](https://github.com/Holi0317/pullsize/blob/main/src/config.ts),
+[config.ts](https://github.com/Holi0317/pullsize/blob/main/src/services/config.ts),
 `ConfigSchema` variable.
 
 Pullsize will read the config from the base branch of the PR. So if your PR is
