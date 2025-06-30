@@ -1,31 +1,33 @@
 import { App } from "octokit";
 import type { PullRequest } from "@octokit/webhooks-types";
-import { Handler } from "./handler";
 import { unwrap } from "./utils";
-import { CommentUpdater, LabelUpdater } from "./updater";
-import { readConfig, type ConfigType } from "./config";
-import { Context } from "./context";
+import { readConfig, type ConfigType } from "./services/config";
+import { summarizeDiff } from "./services/summary";
+import { deleteComment, updateComment } from "./services/comment";
+import { createLabels, removePRLabels, setPRLabel } from "./services/label";
+import { getPRInfo } from "./services/prinfo";
 
 async function handle(app: App, installation_id: number, pr: PullRequest) {
+  const { owner, repo, issue_number } = getPRInfo(pr);
+
   console.log(
-    `Handling PR ${pr.base.repo.full_name}#${pr.number}. Installation ID = ${installation_id}`,
+    `Handling PR ${owner}/${repo}#${pr.number}. Installation ID = ${installation_id}`,
   );
 
   const octo = await app.getInstallationOctokit(installation_id);
-  const ctx = new Context(octo, pr);
 
-  if (ctx.pr.state === "closed") {
+  if (pr.state === "closed") {
     console.info("PR is closed. Ignoring the webhook");
     return;
   }
 
   console.log("Fetching diff for the PR");
-  const response = await ctx.octo.request(
+  const response = await octo.request(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}",
     {
-      owner: pr.base.repo.owner.login,
-      repo: pr.base.repo.name,
-      pull_number: pr.number,
+      owner,
+      repo,
+      pull_number: issue_number,
       mediaType: {
         format: "diff",
       },
@@ -36,32 +38,40 @@ async function handle(app: App, installation_id: number, pr: PullRequest) {
   // https://github.com/octokit/request.js/issues/463#issuecomment-1164800888
   const diffFile = response.data as unknown as string;
 
-  const commentUpdater = new CommentUpdater(ctx);
-
   let config: ConfigType;
   try {
-    config = await readConfig(ctx);
+    config = await readConfig(octo, pr);
   } catch (error) {
     console.error("Failed to read config", error);
-    await commentUpdater.updateComment(`Failed to read config. Pullsize bot is not operating!
+    await updateComment(
+      octo,
+      pr,
+      `Failed to read config. Pullsize bot is not operating!
 
 Exception detail:
 \`\`\`
 ${error}
 \`\`\`
-`);
+`,
+    );
     return;
   }
 
-  const handler = new Handler(config);
-  const resp = await handler.run(diffFile);
+  const resp = summarizeDiff(config, diffFile);
 
   console.log("Ran handler. Updating PR comment and label", resp);
 
-  const labelUpdater = new LabelUpdater(ctx, config);
-  await commentUpdater.updateComment(resp.comment);
-  await labelUpdater.createLabels();
-  await labelUpdater.updateLabel(resp.label);
+  // Delete comment if there is any. We should not leave any comment on
+  // successful run.
+  await deleteComment(octo, pr);
+
+  await createLabels(octo, pr, config);
+
+  if (resp.label == null) {
+    await removePRLabels(octo, pr, config);
+  } else {
+    await setPRLabel(octo, pr, config, resp.label);
+  }
 }
 
 export function useOctoApp(env: Env) {
