@@ -22,10 +22,10 @@
     "*.{js,cjs,mjs,ts}": "eslint"
   },
   "devDependencies": {
-    "@eslint/js": "^9.30.0",
+    "@eslint/js": "^9.31.0",
     "@octokit/webhooks-types": "^7.3.2",
     "@types/picomatch": "^4.0.0",
-    "eslint": "^9.30.0",
+    "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import-x": "^4.16.1",
     "eslint-plugin-unicorn": "^59.0.1",
@@ -33,18 +33,18 @@
     "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
     "typescript": "^5.0.4",
-    "typescript-eslint": "^8.35.0",
-    "wrangler": "^4.20.0"
+    "typescript-eslint": "^8.36.0",
+    "wrangler": "^4.24.3"
   },
   "dependencies": {
-    "@cfworker/sentry": "^2.0.0",
-    "@hono/zod-validator": "^0.7.0",
-    "@octokit/auth-app": "^6.0.3",
+    "@cfworker/sentry": "^5.0.3",
+    "@hono/zod-validator": "^0.7.1",
+    "@octokit/auth-app": "^8.0.2",
     "@std/toml": "jsr:^1.0.8",
-    "hono": "^4.8.0",
-    "octokit": "^3.1.2",
-    "parse-git-diff": "^0.0.15",
+    "hono": "^4.8.4",
+    "octokit": "^5.0.3",
+    "parse-git-diff": "^0.0.19",
     "picomatch": "^4.0.1",
-    "zod": "^3.22.4"
+    "zod": "^4.0.5"
   }
 }
