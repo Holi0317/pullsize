@@ -1,13 +1,13 @@
-import type { Octokit } from "octokit";
-import type { PullRequest } from "@octokit/webhooks-types";
+import type { Octokit } from "@octokit/core";
 import type { ConfigType } from "./config";
 import { getPRInfo } from "./prinfo";
+import type { PullRequest } from "./webhook_schema";
 
 /**
  * Create configured issue labels from config.
  *
  * This does not track and purge deleted labels. That is just too hard for us to
- * do so.
+ * do so while keeping this app stateless.
  *
  * This function will update the color for labels if that has been changed.
  */

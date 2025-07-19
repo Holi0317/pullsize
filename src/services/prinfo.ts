@@ -1,12 +1,15 @@
-import type { PullRequest } from "@octokit/webhooks-types";
+import type { PullRequest } from "./webhook_schema";
 
+/**
+ * Convenient reader for some common properties from a PR object.
+ *
+ * Also consolidate reading of these properties so I won't mix up head and base
+ * (happened in the past).
+ */
 export function getPRInfo(pr: PullRequest) {
-  // FIXME: Use pr.head instead.
-  // We actually want to get the target PR, not the base PR.
-
   return {
-    owner: pr.base.repo.owner.login,
-    repo: pr.base.repo.name,
+    owner: pr.head.repo.owner.login,
+    repo: pr.head.repo.name,
     issue_number: pr.number,
   };
 }

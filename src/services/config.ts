@@ -1,8 +1,9 @@
-import { type Octokit, RequestError } from "octokit";
+import type { Octokit } from "@octokit/core";
+import { RequestError } from "@octokit/request-error";
 import { z } from "zod";
 import { parse } from "@std/toml";
-import type { PullRequest } from "@octokit/webhooks-types";
 import { getPRInfo } from "./prinfo";
+import type { PullRequest } from "./webhook_schema";
 
 const ConfigSchema = z.object({
   /**
