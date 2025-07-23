@@ -9,9 +9,9 @@
  */
 
 import { z } from "zod";
-import type { Octokit } from "octokit";
-import type { PullRequest } from "@octokit/webhooks-types";
+import type { Octokit } from "@octokit/core";
 import { getPRInfo } from "./prinfo";
+import type { PullRequest } from "./webhook_schema";
 
 const ViewerSchema = z.object({
   viewer: z.object({

@@ -2,7 +2,9 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { captureError } from "@cfworker/sentry";
 import z from "zod";
-import { useOctoApp } from "./octo";
+import { webhookSignatureMiddleware } from "./services/webhook";
+import { EventSchema } from "./services/webhook_schema";
+import { handle } from "./services/handler";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -16,19 +18,22 @@ app.post(
       "x-hub-signature-256": z.string(),
     }),
   ),
+  webhookSignatureMiddleware,
   async (c) => {
-    const octoApp = useOctoApp(c.env);
-
     const headers = c.req.valid("header");
+    const name = headers["x-github-event"];
 
-    await octoApp.webhooks.verifyAndReceive({
-      id: headers["x-github-hook-id"],
-      name: headers["x-github-event"] as any, // FIXME: Verify enum on zod
-      signature: headers["x-hub-signature-256"],
-      payload: await c.req.text(),
-    });
+    if (name === "ping") {
+      return c.text("pong", 202);
+    }
 
-    return c.text("ok", 202);
+    if (name !== "pull_request") {
+      return c.text(`unknown event name ${name}`, 400);
+    }
+
+    const event = EventSchema.parse(await c.req.json());
+
+    return await handle(c, event);
   },
 );
 
