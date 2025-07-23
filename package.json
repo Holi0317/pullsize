@@ -40,6 +40,7 @@
     "@hono/zod-validator": "^0.7.0",
     "@octokit/app": "^16.0.1",
     "@octokit/core": "^7.0.2",
+    "@octokit/plugin-paginate-rest": "^13.1.1",
     "@octokit/request-error": "^7.0.0",
     "@octokit/webhooks": "^14.1.0",
     "@sentry/cloudflare": "^9.40.0",
