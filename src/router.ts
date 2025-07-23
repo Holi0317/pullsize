@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono } from "hono/tiny";
 import { zValidator } from "@hono/zod-validator";
 import z from "zod";
 import * as Sentry from "@sentry/cloudflare";
