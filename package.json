@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",
+    "@types/node": "^24.1.0",
     "@types/picomatch": "^4.0.0",
     "eslint": "^9.30.0",
     "eslint-config-prettier": "^10.1.5",
@@ -36,12 +37,12 @@
     "wrangler": "^4.20.0"
   },
   "dependencies": {
-    "@cfworker/sentry": "^2.0.0",
     "@hono/zod-validator": "^0.7.0",
     "@octokit/app": "^16.0.1",
     "@octokit/core": "^7.0.2",
     "@octokit/request-error": "^7.0.0",
     "@octokit/webhooks": "^14.1.0",
+    "@sentry/cloudflare": "^9.40.0",
     "@std/toml": "jsr:^1.0.8",
     "hono": "^4.8.0",
     "parse-git-diff": "^0.0.15",

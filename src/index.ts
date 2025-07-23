@@ -1,11 +1,18 @@
 /**
  * App entry point for Cloudflare.
- *
- * This looks stupid but that's because hono router naively implements cloudflare's
- * fetch interface. We might add other runtime (probably nodejs) in the future
- * if there's any need with initialization logic in this file.
  */
 
+import * as Sentry from "@sentry/cloudflare";
 import app from "./router";
 
-export default app;
+export default Sentry.withSentry((env: Env) => {
+  const { id: versionId } = env.CF_VERSION_METADATA;
+
+  return {
+    dsn: env.SENTRY_DSN,
+    // Only enable sentry if the DSN is set to something
+    enabled: !!env.SENTRY_DSN,
+    release: versionId,
+    tracesSampleRate: 1.0,
+  };
+}, app);

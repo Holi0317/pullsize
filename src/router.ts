@@ -1,12 +1,26 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { captureError } from "@cfworker/sentry";
 import z from "zod";
+import * as Sentry from "@sentry/cloudflare";
+import { HTTPException } from "hono/http-exception";
 import { webhookSignatureMiddleware } from "./services/webhook";
 import { EventSchema } from "./services/webhook_schema";
 import { handle } from "./services/handler";
+import { setSentry } from "./services/sentry";
 
 const app = new Hono<{ Bindings: Env }>();
+
+app.onError((err, c) => {
+  console.error("Router raised exception", err);
+
+  Sentry.captureException(err);
+
+  if (err instanceof HTTPException) {
+    return err.getResponse();
+  }
+
+  return c.text("Internal server error", { status: 500 });
+});
 
 app.post(
   "/github/webhook",
@@ -33,31 +47,14 @@ app.post(
 
     const event = EventSchema.parse(await c.req.json());
 
+    setSentry(event.pull_request);
+
     return await handle(c, event);
   },
 );
 
 app.notFound((c) => {
   return c.text("Not found", 404);
-});
-
-app.onError((err, c) => {
-  console.error("Router raised exception", err);
-
-  if (c.env.SENTRY_DSN) {
-    const { posted } = captureError({
-      sentryDsn: c.env.SENTRY_DSN,
-      environment: "prod",
-      release: "release",
-      err,
-      request: c.req.raw,
-      user: "",
-    });
-
-    c.executionCtx.waitUntil(posted);
-  }
-
-  return c.text("Internal server error", { status: 500 });
 });
 
 export default app;
