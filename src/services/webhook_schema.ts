@@ -66,7 +66,7 @@ export const PullRequestSchema = z.object({
   }),
   labels: z.array(
     z.object({
-      id: z.string(),
+      id: z.number(),
       name: z.string(),
       color: z.string(),
     }),
