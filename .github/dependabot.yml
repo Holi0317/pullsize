@@ -16,6 +16,20 @@ updates:
       interval: "weekly"
 
     groups:
-      everything:
+      linting:
         patterns:
-          - "*"
+          - "@eslint/*"
+          - "eslint*"
+          - "typescript-eslint"
+          - "@typescript-eslint"
+          - "prettier"
+          - "husky"
+          - "lint-staged"
+      hono:
+        patterns:
+          - "hono"
+          - "@hono/*"
+      octokit:
+        patterns:
+          - "octokit"
+          - "@octokit/*"
