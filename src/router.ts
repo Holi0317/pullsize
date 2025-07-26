@@ -1,6 +1,6 @@
 import { Hono } from "hono/tiny";
 import { zValidator } from "@hono/zod-validator";
-import z from "zod";
+import * as z from "zod";
 import * as Sentry from "@sentry/cloudflare";
 import { HTTPException } from "hono/http-exception";
 import { webhookSignatureMiddleware } from "./services/webhook";
