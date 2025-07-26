@@ -1,6 +1,6 @@
 import type { Octokit } from "@octokit/core";
 import { RequestError } from "@octokit/request-error";
-import { z } from "zod";
+import * as z from "zod";
 import { parse } from "@std/toml";
 import { getPRInfo } from "./prinfo";
 import type { PullRequest } from "./webhook_schema";

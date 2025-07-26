@@ -8,7 +8,7 @@
  * @module
  */
 
-import { z } from "zod";
+import * as z from "zod";
 import type { Octokit } from "@octokit/core";
 import { getPRInfo } from "./prinfo";
 import type { PullRequest } from "./webhook_schema";
