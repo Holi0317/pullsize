@@ -36,8 +36,8 @@ importers:
         specifier: ^4.8.9
         version: 4.8.9
       parse-git-diff:
-        specifier: ^0.0.15
-        version: 0.0.15
+        specifier: ^0.0.19
+        version: 0.0.19
       picomatch:
         specifier: ^4.0.1
         version: 4.0.2
@@ -1362,8 +1362,8 @@ packages:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
 
-  parse-git-diff@0.0.15:
-    resolution: {integrity: sha512-KU7FMvw7ybx2BqkSJthyLl6G4LmKzWwOyalNLdJtzkV7xIFU5oCIVDP9OQl+0vkVv7EKiKDnJlkdzPQ6ueFsgw==}
+  parse-git-diff@0.0.19:
+    resolution: {integrity: sha512-oh3giwKzsPlOhekiDDyd/pfFKn04IZoTjEThquhfKigwiUHymiP/Tp6AN5nGIwXQdWuBTQvz9AaRdN5TBsJ8MA==}
 
   path-exists@4.0.0:
     resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
@@ -2845,7 +2845,7 @@ snapshots:
     dependencies:
       callsites: 3.1.0
 
-  parse-git-diff@0.0.15: {}
+  parse-git-diff@0.0.19: {}
 
   path-exists@4.0.0: {}
 
