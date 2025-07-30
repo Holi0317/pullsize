@@ -5,7 +5,7 @@ import { allowActions, type EventSchema } from "./webhook_schema";
 import { getPRInfo } from "./prinfo";
 import { readConfig, type ConfigType } from "./config";
 import { deleteComment, updateComment } from "./comment";
-import { summarizeDiff } from "./summary";
+import { diffSize, getLabel } from "./summary";
 import { createLabels, removePRLabels, setPRLabel } from "./label";
 import { MyOctokit } from "./octokit";
 
@@ -14,7 +14,7 @@ export async function handle(
   event: z.infer<typeof EventSchema>,
 ): Promise<Response> {
   const pr = event.pull_request;
-  const { owner, repo, issue_number } = getPRInfo(pr);
+  const { owner, repo } = getPRInfo(pr);
 
   console.log(
     `Handling PR ${owner}/${repo}#${pr.number}. Installation ID = ${event.installation.id}, Action = ${event.action}`,
@@ -36,22 +36,7 @@ export async function handle(
     return c.text("ok", 202);
   }
 
-  console.log("Fetching diff for the PR");
-  const response = await octo.request(
-    "GET /repos/{owner}/{repo}/pulls/{pull_number}",
-    {
-      owner,
-      repo,
-      pull_number: issue_number,
-      mediaType: {
-        format: "diff",
-      },
-    },
-  );
-  // The cast is suggested here. Cast is necessary coz octokit does not support
-  // mediaType in typing.
-  // https://github.com/octokit/request.js/issues/463#issuecomment-1164800888
-  const diffFile = response.data as unknown as string;
+  console.log("Fetching config");
 
   let config: ConfigType;
   try {
@@ -72,9 +57,12 @@ ${error}
     return c.text("Bad config", 400);
   }
 
-  const resp = summarizeDiff(config, diffFile);
-
-  console.log("Ran handler. Updating PR comment and label", resp);
+  console.log("Fetching diff size");
+  const size = await diffSize(octo, pr, config);
+  const label = getLabel(config, size);
+  console.log(
+    `Diff size = ${size}. Label = ${label}. Updating PR comment and label`,
+  );
 
   // Delete comment if there is any. We should not leave any comment on
   // successful run.
@@ -82,10 +70,10 @@ ${error}
 
   await createLabels(octo, pr, config);
 
-  if (resp.label == null) {
+  if (label == null) {
     await removePRLabels(octo, pr, config);
   } else {
-    await setPRLabel(octo, pr, config, resp.label);
+    await setPRLabel(octo, pr, config, label);
   }
 
   return c.text("ok", 202);

@@ -1,60 +1,13 @@
-import parseGitDiff, { type AnyChunk } from "parse-git-diff";
 import picomatch from "picomatch";
 import type { ConfigType } from "./config";
+import type { MyOctokitInstance } from "./octokit";
+import type { PullRequest } from "./webhook_schema";
+import { getPRInfo } from "./prinfo";
 
-export interface Summary {
-  add: number;
-  del: number;
-}
-
-function genDiffSummary(diffFile: string) {
-  const diff = parseGitDiff(diffFile);
-
-  const summary = new Map<string, Summary>();
-
-  for (const file of diff.files) {
-    const filename = file.type === "RenamedFile" ? file.pathAfter : file.path;
-
-    let add = 0;
-    let del = 0;
-
-    for (const chunk of file.chunks) {
-      const summary = summarizeChunk(chunk);
-      add += summary.add;
-      del += summary.del;
-    }
-
-    summary.set(filename, { add, del });
-  }
-
-  return summary;
-}
-
-function summarizeChunk(chunk: AnyChunk): Summary {
-  let add = 0;
-  let del = 0;
-
-  // Don't have any information for line change. Treating that as a rename
-  if (chunk.type === "BinaryFilesChunk") {
-    return { add, del };
-  }
-
-  for (const change of chunk.changes) {
-    if (change.type === "AddedLine") {
-      add++;
-    }
-
-    if (change.type === "DeletedLine") {
-      del++;
-    }
-  }
-
-  return { add, del };
-}
-
-function getSize(config: ConfigType, summary: Summary): string | null {
-  const size = summary.add + summary.del;
-
+/**
+ * Base on config, get label text from PR size
+ */
+export function getLabel(config: ConfigType, size: number): string | null {
   for (const preset of config.labels) {
     if (size >= preset.threshold) {
       return preset.name;
@@ -64,25 +17,39 @@ function getSize(config: ConfigType, summary: Summary): string | null {
   return null;
 }
 
-export function summarizeDiff(config: ConfigType, diffFile: string) {
-  const summaryMap = genDiffSummary(diffFile);
-  const summary: Summary = { add: 0, del: 0 };
+/**
+ * Get size (number of lines added plus deleted) of the PR.
+ *
+ * This will ignore files/glob matching `ignore` in config.
+ */
+export async function diffSize(
+  octo: MyOctokitInstance,
+  pr: PullRequest,
+  config: ConfigType,
+): Promise<number> {
+  const { owner, repo, issue_number } = getPRInfo(pr);
 
   const matcher = picomatch(config.ignore);
 
-  for (const [filepath, sum] of summaryMap) {
-    if (matcher(filepath)) {
-      continue;
-    }
+  let size = 0;
 
-    summary.add += sum.add;
-    summary.del += sum.del;
+  const iter = octo.paginate.iterator(
+    "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
+    {
+      owner,
+      repo,
+      pull_number: issue_number,
+    },
+  );
+  for await (const resp of iter) {
+    for (const chunk of resp.data) {
+      if (matcher(chunk.filename)) {
+        continue;
+      }
+
+      size += chunk.changes;
+    }
   }
 
-  console.log("Got summary of the PR", summary);
-  const size = getSize(config, summary);
-
-  return {
-    label: size,
-  };
+  return size;
 }
