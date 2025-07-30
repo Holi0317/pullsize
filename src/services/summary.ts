@@ -1,6 +1,7 @@
 import picomatch from "picomatch";
+import { composePaginateRest } from "@octokit/plugin-paginate-rest";
+import type { Octokit } from "@octokit/core";
 import type { ConfigType } from "./config";
-import type { MyOctokitInstance } from "./octokit";
 import type { PullRequest } from "./webhook_schema";
 import { getPRInfo } from "./prinfo";
 
@@ -23,7 +24,7 @@ export function getLabel(config: ConfigType, size: number): string | null {
  * This will ignore files/glob matching `ignore` in config.
  */
 export async function diffSize(
-  octo: MyOctokitInstance,
+  octo: Octokit,
   pr: PullRequest,
   config: ConfigType,
 ): Promise<number> {
@@ -33,7 +34,8 @@ export async function diffSize(
 
   let size = 0;
 
-  const iter = octo.paginate.iterator(
+  const iter = composePaginateRest.iterator(
+    octo,
     "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
     {
       owner,
@@ -41,6 +43,7 @@ export async function diffSize(
       pull_number: issue_number,
     },
   );
+
   for await (const resp of iter) {
     for (const chunk of resp.data) {
       if (matcher(chunk.filename)) {

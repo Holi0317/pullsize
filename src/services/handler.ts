@@ -7,7 +7,6 @@ import { readConfig, type ConfigType } from "./config";
 import { deleteComment, updateComment } from "./comment";
 import { diffSize, getLabel } from "./summary";
 import { createLabels, removePRLabels, setPRLabel } from "./label";
-import { MyOctokit } from "./octokit";
 
 export async function handle(
   c: Context,
@@ -27,7 +26,6 @@ export async function handle(
   const app = new App({
     appId: c.env.GH_APP_ID,
     privateKey: c.env.GH_PRIVATE_KEY,
-    Octokit: MyOctokit,
   });
   const octo = await app.getInstallationOctokit(event.installation.id);
 
