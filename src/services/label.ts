@@ -1,8 +1,8 @@
+import { composePaginateRest } from "@octokit/plugin-paginate-rest";
 import type { Octokit } from "@octokit/core";
 import type { ConfigType } from "./config";
 import { getPRInfo } from "./prinfo";
 import type { PullRequest } from "./webhook_schema";
-import type { MyOctokitInstance } from "./octokit";
 
 /**
  * Create configured issue labels from config.
@@ -13,16 +13,19 @@ import type { MyOctokitInstance } from "./octokit";
  * This function will update the color for labels if that has been changed.
  */
 export async function createLabels(
-  octo: MyOctokitInstance,
+  octo: Octokit,
   pr: PullRequest,
   config: ConfigType,
 ) {
   const { owner, repo } = getPRInfo(pr);
-
-  const labels = await octo.paginate("GET /repos/{owner}/{repo}/labels", {
-    owner,
-    repo,
-  });
+  const labels = await composePaginateRest(
+    octo,
+    "GET /repos/{owner}/{repo}/labels",
+    {
+      owner,
+      repo,
+    },
+  );
 
   const labelMap = new Map(labels.map((l) => [l.name, l]));
 
