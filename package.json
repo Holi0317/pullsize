@@ -43,7 +43,7 @@
     "@octokit/plugin-paginate-rest": "^13.1.1",
     "@octokit/request-error": "^7.0.0",
     "@octokit/webhooks": "^14.1.1",
-    "@sentry/cloudflare": "^9.42.0",
+    "@sentry/cloudflare": "^10.0.0",
     "@std/toml": "jsr:^1.0.8",
     "hono": "^4.8.9",
     "picomatch": "^4.0.3",
