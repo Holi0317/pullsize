@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@hono/zod-validator':
         specifier: ^0.7.2
-        version: 0.7.2(hono@4.8.9)(zod@4.0.10)
+        version: 0.7.2(hono@4.8.9)(zod@4.0.14)
       '@octokit/app':
         specifier: ^16.0.1
         version: 16.0.1
@@ -39,8 +39,8 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3
       zod:
-        specifier: ^4.0.10
-        version: 4.0.10
+        specifier: ^4.0.14
+        version: 4.0.14
     devDependencies:
       '@eslint/js':
         specifier: ^9.32.0
@@ -1640,8 +1640,8 @@ packages:
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
 
-  zod@4.0.10:
-    resolution: {integrity: sha512-3vB+UU3/VmLL2lvwcY/4RV2i9z/YU0DTV/tDuYjrwmx5WeJ7hwy+rGEEx8glHp6Yxw7ibRbKSaIFBgReRPe5KA==}
+  zod@4.0.14:
+    resolution: {integrity: sha512-nGFJTnJN6cM2v9kXL+SOBq3AtjQby3Mv5ySGFof5UGRHrRioSJ5iG680cYNjE/yWk671nROcpPj4hAS8nyLhSw==}
 
 snapshots:
 
@@ -1816,10 +1816,10 @@ snapshots:
       '@eslint/core': 0.15.1
       levn: 0.4.1
 
-  '@hono/zod-validator@0.7.2(hono@4.8.9)(zod@4.0.10)':
+  '@hono/zod-validator@0.7.2(hono@4.8.9)(zod@4.0.14)':
     dependencies:
       hono: 4.8.9
-      zod: 4.0.10
+      zod: 4.0.14
 
   '@humanfs/core@0.19.1': {}
 
@@ -3118,4 +3118,4 @@ snapshots:
 
   zod@3.22.3: {}
 
-  zod@4.0.10: {}
+  zod@4.0.14: {}
