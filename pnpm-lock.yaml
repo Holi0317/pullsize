@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@hono/zod-validator':
-        specifier: ^0.7.2
-        version: 0.7.2(hono@4.9.4)(zod@4.1.0)
+        specifier: ^0.7.4
+        version: 0.7.4(hono@4.10.3)(zod@4.1.0)
       '@octokit/app':
         specifier: ^16.0.1
         version: 16.0.1
@@ -33,8 +33,8 @@ importers:
         specifier: jsr:^1.0.8
         version: '@jsr/std__toml@1.0.8'
       hono:
-        specifier: ^4.9.4
-        version: 4.9.4
+        specifier: ^4.10.3
+        version: 4.10.3
       picomatch:
         specifier: ^4.0.3
         version: 4.0.3
@@ -335,8 +335,8 @@ packages:
     resolution: {integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@hono/zod-validator@0.7.2':
-    resolution: {integrity: sha512-ub5eL/NeZ4eLZawu78JpW/J+dugDAYhwqUIdp9KYScI6PZECij4Hx4UsrthlEUutqDDhPwRI0MscUfNkvn/mqQ==}
+  '@hono/zod-validator@0.7.4':
+    resolution: {integrity: sha512-biKGn3BRJVaftZlIPMyK+HCe/UHAjJ6sH0UyXe3+v0OcgVr9xfImDROTJFLtn9e3XEEAHGZIM9U6evu85abm8Q==}
     peerDependencies:
       hono: '>=3.9.0'
       zod: ^3.25.0 || ^4.0.0
@@ -1160,8 +1160,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.9.4:
-    resolution: {integrity: sha512-61hl6MF6ojTl/8QSRu5ran6GXt+6zsngIUN95KzF5v5UjiX/xnrLR358BNRawwIRO49JwUqJqQe3Rb2v559R8Q==}
+  hono@4.10.3:
+    resolution: {integrity: sha512-2LOYWUbnhdxdL8MNbNg9XZig6k+cZXm5IjHn2Aviv7honhBMOHb+jxrKIeJRZJRmn+htUCKhaicxwXuUDlchRA==}
     engines: {node: '>=16.9.0'}
 
   husky@9.1.7:
@@ -1817,9 +1817,9 @@ snapshots:
       '@eslint/core': 0.15.2
       levn: 0.4.1
 
-  '@hono/zod-validator@0.7.2(hono@4.9.4)(zod@4.1.0)':
+  '@hono/zod-validator@0.7.4(hono@4.10.3)(zod@4.1.0)':
     dependencies:
-      hono: 4.9.4
+      hono: 4.10.3
       zod: 4.1.0
 
   '@humanfs/core@0.19.1': {}
@@ -2653,7 +2653,7 @@ snapshots:
       function-bind: 1.1.2
     optional: true
 
-  hono@4.9.4: {}
+  hono@4.10.3: {}
 
   husky@9.1.7: {}
 
