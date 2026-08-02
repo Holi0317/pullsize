@@ -29,7 +29,7 @@
     "husky": "^9.0.11",
     "lint-staged": "^17.3.0",
     "prettier": "^3.9.6",
-    "typescript": "^5.0.4",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.65.0",
     "wrangler": "^4.44.0"
   },
