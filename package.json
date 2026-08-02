@@ -21,7 +21,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.1.0",
-    "@types/picomatch": "^4.0.2",
+    "@types/picomatch": "^4.0.3",
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import-x": "^4.17.1",
@@ -31,19 +31,19 @@
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.65.0",
-    "wrangler": "^4.44.0"
+    "wrangler": "^4.118.0"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.7.2",
-    "@octokit/app": "^16.0.1",
-    "@octokit/core": "^7.0.3",
-    "@octokit/plugin-paginate-rest": "^13.1.1",
-    "@octokit/request-error": "^7.0.0",
-    "@octokit/webhooks": "^14.1.3",
-    "@sentry/cloudflare": "^10.5.0",
+    "@hono/zod-validator": "^0.9.0",
+    "@octokit/app": "^16.1.2",
+    "@octokit/core": "^7.0.7",
+    "@octokit/plugin-paginate-rest": "^15.0.0",
+    "@octokit/request-error": "^7.1.1",
+    "@octokit/webhooks": "^14.2.0",
+    "@sentry/cloudflare": "^10.69.0",
     "@std/toml": "jsr:^1.0.8",
-    "hono": "^4.9.4",
-    "picomatch": "^4.0.3",
-    "zod": "^4.1.0"
+    "hono": "^4.12.33",
+    "picomatch": "^4.0.5",
+    "zod": "^4.4.3"
   }
 }
