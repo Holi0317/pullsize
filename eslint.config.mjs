@@ -1,10 +1,13 @@
-import eslint from "@eslint/js";
+// @ts-check
+
+import { defineConfig } from "eslint/config";
+import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import prettier from "eslint-config-prettier";
 import unicorn from "eslint-plugin-unicorn";
 import importPlugin from "eslint-plugin-import-x";
 
-export default tseslint.config(
+export default defineConfig([
   {
     ignores: [
       ".esbuild",
@@ -15,7 +18,7 @@ export default tseslint.config(
     ],
   },
 
-  eslint.configs.recommended,
+  js.configs.recommended,
   ...tseslint.configs.recommended,
   {
     plugins: {
@@ -57,8 +60,8 @@ export default tseslint.config(
       "@typescript-eslint/no-import-type-side-effects": "error",
       "unicorn/no-useless-spread": "error",
       "unicorn/no-array-reduce": "error",
-      "unicorn/no-array-for-each": "error",
+      "unicorn/no-for-each": "error",
     },
   },
   prettier,
-);
+]);
