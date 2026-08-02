@@ -19,18 +19,18 @@
     "*.{js,cjs,mjs,ts}": "eslint"
   },
   "devDependencies": {
-    "@eslint/js": "^9.35.0",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^24.1.0",
     "@types/picomatch": "^4.0.2",
-    "eslint": "^9.35.0",
+    "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import-x": "^4.16.1",
-    "eslint-plugin-unicorn": "^61.0.1",
+    "eslint-plugin-import-x": "^4.17.1",
+    "eslint-plugin-unicorn": "^72.0.0",
     "husky": "^9.0.11",
-    "lint-staged": "^16.1.6",
+    "lint-staged": "^17.3.0",
     "prettier": "^3.9.6",
     "typescript": "^5.0.4",
-    "typescript-eslint": "^8.42.0",
+    "typescript-eslint": "^8.65.0",
     "wrangler": "^4.44.0"
   },
   "dependencies": {
