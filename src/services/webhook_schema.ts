@@ -10,34 +10,10 @@
 
 import * as z from "zod";
 
-export const pullRequestActions = z.enum([
-  "assigned",
-  "auto_merge_disabled",
-  "auto_merge_enabled",
-  "closed",
-  "converted_to_draft",
-  "demilestoned",
-  "dequeued",
-  "edited",
-  "enqueued",
-  "labeled",
-  "locked",
-  "milestoned",
-  "opened",
-  "ready_for_review",
-  "reopened",
-  "review_request_removed",
-  "review_requested",
-  "synchronize",
-  "unassigned",
-  "unlabeled",
-  "unlocked",
-]);
-
 /**
  * Set of actions we actually handle.
  */
-export const allowActions = new Set<z.infer<typeof pullRequestActions>>([
+export const allowActions = new Set<string>([
   "edited",
   "synchronize",
   "opened",
@@ -76,7 +52,7 @@ export const PullRequestSchema = z.object({
 export type PullRequest = z.infer<typeof PullRequestSchema>;
 
 export const EventSchema = z.object({
-  action: pullRequestActions,
+  action: z.string(),
   installation: z.object({
     id: z.number(),
     node_id: z.string(),
